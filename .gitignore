@@ -1,0 +1,9 @@
+node_modules/
+client/node_modules/
+server/migrations/
+server/dist/
+server/config
+server/models
+server/node_modules/
+server/seeders
+server/.env

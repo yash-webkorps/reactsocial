@@ -1,0 +1,45 @@
+.user-profile {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 50px;
+    margin-left: 50px;
+    background-color: white;
+    min-height: 24.3em;
+    height: 100%;
+  }
+  
+  .user-profile__cover {
+    width: 20%;
+    height: auto; /* Adjusts the height automatically based on the width */
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid black;
+  }
+  
+  .user-profile__info {
+    text-align: center; /* Centers the text inside this div */
+    width: 100%;
+  }
+  
+  .user-profile__name {
+    padding: 0;
+    margin: 0;
+    font-size: 2em;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .user-profile__bio,
+  .user-profile__location {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
