@@ -6,26 +6,36 @@ import { VALIDATION_ERROR } from "../../constants/errormessages.js";
 import Post from "../../models/Post.js";
 import { v4 as uuidv4 } from 'uuid';
 import cloudinary from "../../utils/cloudinary.js";
+import User from "../../models/User.js";
 
 
-const addPost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response) => {
     let cloudinaryPublicId: string | null = null;
     try {
         const {title, description} = req.body as PostRequestBody;
         
         const file = req.file;
-
-        const user = req.user;
         
         if (!title || !description) {
             return res.status(BAD_REQUEST).json({ error: VALIDATION_ERROR });
         }
 
-        if (file) {
+        const post = await Post.findByPk(req.params.postId)
+
+        console.log(post, file);
+        if (post && file) {
+          
+            await cloudinary.uploader.destroy(post.cloudinaryPublicId);
+            
             const result = await cloudinary.uploader.upload(file.path)
             cloudinaryPublicId = result.public_id;
-            const post = await Post.create({id: uuidv4(), title, description, content: result.secure_url,cloudinaryPublicId, userId: user.id, likeCounts: 0});
-            res.status(SUCCESS).json({post: post, userName: user.username})
+            const updatedPost = await post.update({title, description, content: result.secure_url, cloudinaryPublicId})
+            
+            const user = await User.findByPk(post.userId)
+
+            if (user) {
+              res.status(201).json({updatedPost: updatedPost, userName: user.username})
+            }
         }
         
     } catch (error: unknown) {
@@ -40,4 +50,4 @@ const addPost = async (req: Request, res: Response) => {
     }
 }
 
-export default addPost;
+export default updatePost;

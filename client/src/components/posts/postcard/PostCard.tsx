@@ -1,17 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./PostCard.css";
 import { PostCardProps } from "../../../interfaces/interfaces";
-import { FavoriteBorderOutlined, FavoriteOutlined, ModeCommentOutlined, SendOutlined } from "@material-ui/icons";
+import { DeleteOutline, EditOutlined, FavoriteBorderOutlined, FavoriteOutlined, ModeCommentOutlined, MoreVertOutlined, SendOutlined } from "@material-ui/icons";
 import SuccessMessage from "../../successmessage/SuccessMessage";
 import axios from "axios";
 import { parseJwt } from "../../../utils/jwtUtils";
+import EditPost from "../editpost/EditPost";
 
-const PostCard: React.FC<PostCardProps> = ({ title, description, content, likeCounts=0, comments=[], userName, isLikedProp}) => {
+const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, likeCounts=0, comments=[], userName, isLikedProp, updateNewPost, removePostFromUi, userId, isAdmin}) => {
   const [likeCount, setLikeCount] = useState(likeCounts)
   const [isLiked, setIsLiked] = useState<boolean>(isLikedProp)
   const [isShowComments, setisShowComments] = useState<boolean>(false)
   const [message, setMessage] = useState<string | null>(null)
   const [comment, setComment] = useState("");
+  const [showMenu, setShowMenu] = useState<boolean>(false)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [authenticate, setAuthenticate] = useState<boolean>(false);
+
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   const [showCommentsOnScreen, setshowCommentsOnScreen] = useState([{
     comment: "",
@@ -69,7 +90,51 @@ const PostCard: React.FC<PostCardProps> = ({ title, description, content, likeCo
     setMessage("Link copied to clipboard!")
   }
 
-    // Use useEffect to automatically clear the message after 3 seconds
+  const handleDotClick = () => {
+    setShowMenu(!showMenu)
+  }
+  const handleEditClick = () => {
+    setShowEditPopup(true);
+  };
+  
+  const handleDeleteClick = async () => {
+    setShowDeleteConfirmation(true);
+  }
+
+  const confirmDelete = async () => {
+    const token = localStorage.getItem("token");
+
+    await axios.delete(`/deletePost/${id}`, {headers: {"auth": token}});
+    setShowDeleteConfirmation(false);
+    removePostFromUi(id)
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirmation(false); // Hide the delete confirmation popup
+  };
+
+  const closeEditPopup = () => {
+    setShowEditPopup(false);
+  };
+
+  const updatePost = (updatedPost: any) => {
+    updateNewPost(updatedPost)
+  };
+
+  const authenticateUser = () => {
+    if (isAdmin) {
+      setAuthenticate(true)
+    } else {
+      const token = localStorage.getItem("token")
+      if (token) {
+        const decodedToken = parseJwt(token)
+        
+        if (decodedToken.id === userId){
+          setAuthenticate(true)
+        };
+      }
+    }
+  }
     useEffect(() => {
       if (message) {
         setTimeout(() => {
@@ -78,9 +143,39 @@ const PostCard: React.FC<PostCardProps> = ({ title, description, content, likeCo
       }
     }, [message]);
 
+    useEffect(()=>{
+      authenticateUser();
+    })
+
   return (
     <div className="post-card">
+    <div className="post-card__image-container">
       <img src={content} alt={title} className="post-card__image" />
+      {authenticate && (<MoreVertOutlined className="post-card__more-icon" onMouseEnter={handleDotClick}/>)}
+      {showMenu && (
+          <div className="post-card__menu" onMouseLeave={handleDotClick}>
+            <div onClick={handleEditClick}>
+              <EditOutlined />
+              <span>Edit</span>
+            </div>
+            <div onClick={handleDeleteClick}>
+              <DeleteOutline />
+              <span>Delete</span>
+            </div>
+          </div>
+        )}
+        {showEditPopup && (
+        <div className="popup-overlay">
+          <EditPost
+            id = {id}
+            title={title}
+            description={description}
+            closeEditPopup={closeEditPopup}
+            updatePost={updatePost}
+          />
+        </div>
+      )}
+    </div>
       <h3 className="user">{userName}</h3>
       <div className="post-card__content">
         <h2 className="post-card__title">{title}</h2>
@@ -117,6 +212,15 @@ const PostCard: React.FC<PostCardProps> = ({ title, description, content, likeCo
           </div>
         )}
       </div>
+      {showDeleteConfirmation && (
+        <div className="delete-confirmation">
+          <p>Are you sure you want to delete this post?</p>
+          <div className="button-centre">
+            <button onClick={confirmDelete} className="confirm-button">Yes</button>
+            <button onClick={cancelDelete} className="cancel-button">No</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

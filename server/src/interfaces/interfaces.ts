@@ -26,6 +26,7 @@ export interface UserAttributes {
     username: string;
     email: string;
     password: string;
+    isAdmin?: boolean
 }
 export interface LikeAttributes {
     id: string;

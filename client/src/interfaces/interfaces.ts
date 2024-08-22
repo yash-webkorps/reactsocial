@@ -22,6 +22,7 @@ export interface Comment {
     user: User
 }
 export interface PostCardProps {
+    id: string;
     title: string;
     description: string;
     content: string; // URL or path to the image
@@ -30,4 +31,8 @@ export interface PostCardProps {
     share?: number;
     userName: string;
     isLikedProp: boolean;
+    updateNewPost: (post: any) => void;
+    removePostFromUi: (id: string) => void;
+    userId: string;
+    isAdmin: boolean;
   }

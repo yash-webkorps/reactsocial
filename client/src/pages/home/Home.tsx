@@ -4,14 +4,14 @@ import "./Home.css";
 import PostCard from "../../components/posts/postcard/PostCard";
 import CreatePost from "../../components/posts/createpost/CreatePost";
 import UserProfile from "../../components/userdetails/UserDetails";
-import { PostCardProps } from "../../interfaces/interfaces";
 
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [user, setUser] = useState({
     username: "",
     email: "",
-    profilePic: ""
+    profilePic: "",
+    isAdmin: false
   });
 
   const [sortOption, setSortOption] = useState<string>("newest");
@@ -27,7 +27,6 @@ const Home: React.FC = () => {
 
   const sortPosts = () => {
     const sortedPosts = [...posts];
-    console.log("sorted posts:::------------.>>>", sortedPosts);
     
     if (sortOption === "newest") {
       sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -41,9 +40,23 @@ const Home: React.FC = () => {
     setPosts(sortedPosts);
   };
  
-  const addNewPost = (newPost: any) => {
+  const addNewPost = (newPost: any) => {    
     setPosts((prevPosts)=> [...prevPosts, newPost])
   }
+  const updateNewPost = (updatedPost: any) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+      )
+    );
+  };
+  const removePostFromUi = (id: string) => {
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post.id !== id)
+    );
+  };
+  
+  
 
   async function authenticateUser() {
     try {
@@ -54,12 +67,13 @@ const Home: React.FC = () => {
       const posts = res.data.posts;
       const user = res.data.user;
 
-      console.log(posts);
-      
       posts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       
+      console.log(user);
+      
       setPosts(posts);
-      setUser(user)
+      setUser(user);
+
       // sortPosts()
     } catch (error) {
       console.log(error);
@@ -95,6 +109,7 @@ const Home: React.FC = () => {
         {posts.map((post) => ( 
           <PostCard
             key={post.id}
+            id={post.id}
             title={post.title}
             description={post.description}
             content={post.content}
@@ -103,6 +118,10 @@ const Home: React.FC = () => {
             share={post.share}
             userName={post.user.username}
             isLikedProp={post.isLiked}
+            updateNewPost = {updateNewPost}
+            removePostFromUi = {removePostFromUi}
+            userId = {post.userId}
+            isAdmin = {user.isAdmin}
           />
         ))}
       </div>

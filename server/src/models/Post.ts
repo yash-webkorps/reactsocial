@@ -7,6 +7,7 @@ interface PostAttributes {
   title: string;
   description: string;
   content: string;
+  cloudinaryPublicId: string;
   likeCounts?: number;
   userId: string;
 }
@@ -35,6 +36,9 @@ const Post = sequelize.define<PostInstance>('post', {
   content: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  cloudinaryPublicId: {
+    type: DataTypes.STRING
   },
   likeCounts: {
     type: DataTypes.NUMBER,

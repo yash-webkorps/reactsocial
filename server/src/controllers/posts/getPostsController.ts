@@ -46,8 +46,6 @@ const getPostsController = async (req: Request, res: Response) => {
                 comments
             }
         }))
-
-        console.log(postWithComments);
         
           
         res.status(SUCCESS).json({posts: postWithComments, user: req.user})
