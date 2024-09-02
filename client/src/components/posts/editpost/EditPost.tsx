@@ -1,22 +1,16 @@
-import React, { useState, ChangeEvent } from "react";
-import axios from "axios";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import "./EditPost.css";
 import ErrorMessage from "../../errormessage/ErrorMessage";
 import { CloseOutlined } from "@material-ui/icons";
-
-interface EditPostProps {
-  id: string;
-  title: string;
-  description: string;
-  closeEditPopup: () => void;
-  updatePost: (updatedPost: any) => void;
-}
+import { EditPostProps } from "../../../interfaces/interfaces";
+import { updatePostRequestApi } from "../../../services/posts/apis";
 
 const EditPost: React.FC<EditPostProps> = ({ id, title, description, closeEditPopup, updatePost }) => {
-  const [newTitle, setNewTitle] = useState(title);
-  const [newDescription, setNewDescription] = useState(description);
+  const [newTitle, setNewTitle] = useState<string>(title);
+  const [newDescription, setNewDescription] = useState<string>(description);
   const [newFile, setNewFile] = useState<File | null>();
   const [error, setError] = useState<string | null>(null);
+  const [profileVisibility, setProfileVisibility] = useState<string>("public");
 
   // preview stats
   const [previewURL, setPreviewURL] = useState<string | null>(null);
@@ -30,24 +24,30 @@ const EditPost: React.FC<EditPostProps> = ({ id, title, description, closeEditPo
       }
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleVisibilityChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setProfileVisibility(event.target.value);
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
+  
     try {
-      const token = localStorage.getItem("token");
-      
       if (!title || !description || !newFile) {
         alert("Please fill in all fields and select an image.");
         return;
-      } 
+      }
+  
       const formData = new FormData();
       formData.append('title', newTitle);
       formData.append('description', newDescription);
       formData.append('content', newFile);
-
-      const res = await axios.put(`/updatePost/${id}`, formData, { headers: { "auth": token } });
+      formData.append('visibility', profileVisibility);
+  
+      const res = await updatePostRequestApi(id, formData);
+  
       const updatedPost = res.data.updatedPost;
-      updatedPost.user = {};
-      updatedPost.user.username = res.data.userName;
+      updatedPost.user = { username: res.data.userName };
+      
       updatePost(updatedPost);
       closeEditPopup();
     } catch (err) {
@@ -69,7 +69,6 @@ const EditPost: React.FC<EditPostProps> = ({ id, title, description, closeEditPo
         <h2>Edit Post</h2>
         <span className="close-btn" onClick={closeEditPopup}><CloseOutlined /></span>
       </div>
-      {error && <ErrorMessage message={error} />}
       <form onSubmit={handleFormSubmit}>
       <label>
           Title:
@@ -99,6 +98,29 @@ const EditPost: React.FC<EditPostProps> = ({ id, title, description, closeEditPo
             </div>
           )}
         </label>
+        <label>
+            Profile Visibility:
+            <div className="visibility-options">
+              <label>
+                <input
+                  type="radio"
+                  value="public"
+                  checked={profileVisibility === "public"}
+                  onChange={handleVisibilityChange}
+                />
+                Public
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="private"
+                  checked={profileVisibility === "private"}
+                  onChange={handleVisibilityChange}
+                />
+                Private
+              </label>
+            </div>
+          </label>
         {error && <ErrorMessage message={error} />}
         <button type="submit" disabled={!(title !== "" && description!== "" && newFile)}>Submit</button>
       </form>

@@ -10,6 +10,7 @@ interface PostAttributes {
   cloudinaryPublicId: string;
   likeCounts?: number;
   userId: string;
+  isPrivate: boolean
 }
 
 // Define the creation attributes, omitting fields that will be auto-generated
@@ -49,7 +50,10 @@ const Post = sequelize.define<PostInstance>('post', {
     references: {
       model: 'Users',
       key: 'id',
-    }}
+    }},
+  isPrivate: {
+    type: DataTypes.BOOLEAN
+  }
 });
 
 export default Post;

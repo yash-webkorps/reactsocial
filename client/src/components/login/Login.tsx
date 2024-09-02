@@ -1,14 +1,17 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 
-import './Login.css'
+import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 
 import { LoginFormData } from "../../interfaces/interfaces";
-import ErrorMessage from "../../components/errormessage/ErrorMessage";
+import ErrorMessage from "../errormessage/ErrorMessage";
 
-const Login : React.FC = () => {
+import Cookies from "js-cookie";
+import { loginUserApi } from "../../services/users/apis";
+
+const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -27,15 +30,13 @@ const Login : React.FC = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     try {
-        event.preventDefault();
-        console.log("Form submitted:", formData);
-
-        const res = await axios.post('http://localhost:5000/login', formData);
-
-        localStorage.setItem('token', res.data.token)        
-
-        navigate('/home')
-        
+      event.preventDefault();
+  
+      const res = await loginUserApi(formData);
+  
+      Cookies.set("token", res.data.token);
+  
+      navigate("/home");
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         if (error.response) {
@@ -71,7 +72,9 @@ const Login : React.FC = () => {
         <div className="left">
           <h1>React Social.</h1>
           <p>
-            Connect, share, and engage with friends and family on React Social. Discover new people, create posts, and enjoy a world of shared experiences.
+            Connect, share, and engage with friends and family on React Social.
+            Discover new people, create posts, and enjoy a world of shared
+            experiences.
           </p>
           <span>Don't have an account?</span>
           <Link to="/signup">
@@ -81,10 +84,25 @@ const Login : React.FC = () => {
         <div className="right">
           <h1>Login</h1>
           <form onSubmit={handleSubmit}>
-            <input type="email" placeholder="Email" name="email" onChange={handleChange} />
-            <input type="password" placeholder="Password" name="password" onChange={handleChange} />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              onChange={handleChange}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              onChange={handleChange}
+            />
             {error && <ErrorMessage message={error} />}
-            <button type="submit" disabled={!(formData.email !== "" && formData.password !== "")}>Login</button>
+            <button
+              type="submit"
+              disabled={!(formData.email !== "" && formData.password !== "")}
+            >
+              Login
+            </button>
           </form>
         </div>
       </div>

@@ -6,10 +6,12 @@ import User from "../../models/User.js";
 import Like from "../../models/Like.js";
 import Comment from "../../models/Comment.js";
 
-const getPostsController = async (req: Request, res: Response) => {
+const userPostsController = async (req: Request, res: Response) => {
     try {
         const userId = req.user.id;
-        const posts = await Post.findAll({      include: [
+        const posts = await Post.findAll({      
+            where: { userId },
+            include: [
             {
               model: User,
               as: 'user',
@@ -54,4 +56,4 @@ const getPostsController = async (req: Request, res: Response) => {
     }
 }
 
-export default getPostsController;
+export default userPostsController;

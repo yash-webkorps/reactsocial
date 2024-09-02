@@ -11,26 +11,27 @@ import cloudinary from "../../utils/cloudinary.js";
 const addPost = async (req: Request, res: Response) => {
     let cloudinaryPublicId: string | null = null;
     try {
-        const {title, description} = req.body as PostRequestBody;
+        const {title, description, visibility} = req.body as PostRequestBody;
         
         const file = req.file;
 
         const user = req.user;
         
-        if (!title || !description) {
+        if (!title || !description|| !visibility) {
             return res.status(BAD_REQUEST).json({ error: VALIDATION_ERROR });
         }
 
         if (file) {
             const result = await cloudinary.uploader.upload(file.path)
             cloudinaryPublicId = result.public_id;
-            const post = await Post.create({id: uuidv4(), title, description, content: result.secure_url,cloudinaryPublicId, userId: user.id, likeCounts: 0});
+            const isPrivate = visibility === "private" ? true : false;
+            const post = await Post.create({id: uuidv4(), title, description, content: result.secure_url,cloudinaryPublicId, userId: user.id, likeCounts: 0, isPrivate});
             res.status(SUCCESS).json({post: post, userName: user.username})
         }
         
     } catch (error: unknown) {
         if (cloudinaryPublicId) {
-            try {
+            try { 
               await cloudinary.uploader.destroy(cloudinaryPublicId);
             } catch (deleteError) {
               console.error("Cloudinary deletion error:", deleteError);

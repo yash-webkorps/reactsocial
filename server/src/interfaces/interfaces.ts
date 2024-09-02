@@ -3,6 +3,11 @@ export interface SignupRequestBody {
     email: string,
     password: string
 }
+export interface ExtendedSignupRequestBody extends SignupRequestBody {
+    profilePic: string;
+    isPrivate: boolean;
+    visibility: string;
+}
 export interface LoginRequestBody {
     email: string,
     password: string
@@ -10,7 +15,8 @@ export interface LoginRequestBody {
 export interface PostRequestBody {
     title: string,
     description: string,
-    content: string
+    content: string,
+    visibility: string
 }
 export interface modifyLikeRequestBody {
     title: string,
@@ -26,7 +32,9 @@ export interface UserAttributes {
     username: string;
     email: string;
     password: string;
-    isAdmin?: boolean
+    cloudinaryPublicId: string;
+    isAdmin?: boolean;
+    isPrivate?: boolean;
 }
 export interface LikeAttributes {
     id: string;

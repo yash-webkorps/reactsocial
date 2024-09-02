@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Damion&display=swap');
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    /* background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); */
+    background-color: white;
+    height: 50px;
+    border-radius: 8px;
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+  
+  .navbar__brand {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar__logo {
+    height: 30px;
+  }
+  
+  .navbar__title {
+    font-family: "Damion", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 29px;
+    color: black;
+    margin-left: 10px;
+  }
+  
+  .navbar__search {
+    width: 200px;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+  }
+  
+  .navbar__icons {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 25%;
+  }
+  
+  .navbar__icons img {
+    height: 25px;
+    cursor: pointer;
+  }
+  

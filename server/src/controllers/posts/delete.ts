@@ -1,13 +1,7 @@
 import { Request, Response } from "express"
-import { BAD_REQUEST, SUCCESS } from "../../constants/errorcodes.js";
 import { handleError } from "../../utils/errorHandler.js";
-import { VALIDATION_ERROR } from "../../constants/errormessages.js";
-import { v4 as uuidv4 } from 'uuid';
-import { CommentBody } from "../../interfaces/interfaces.js";
-import Comment from "../../models/Comment.js";
 import Post from "../../models/Post.js";
 import cloudinary from "../../utils/cloudinary.js";
-
 
 const deletePost = async (req: Request, res: Response) => {
     try{

@@ -1,112 +1,119 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./PostCard.css";
-import { PostCardProps } from "../../../interfaces/interfaces";
-import { DeleteOutline, EditOutlined, FavoriteBorderOutlined, FavoriteOutlined, ModeCommentOutlined, MoreVertOutlined, SendOutlined } from "@material-ui/icons";
+import { Comment, Post, PostCardProps } from "../../../interfaces/interfaces";
+import { ChromeReaderModeOutlined, DeleteOutline, EditOutlined, Facebook, FavoriteBorderOutlined, FavoriteOutlined, Link, ModeCommentOutlined, MoreVertOutlined, SendOutlined, WhatsApp } from "@material-ui/icons";
 import SuccessMessage from "../../successmessage/SuccessMessage";
-import axios from "axios";
 import { parseJwt } from "../../../utils/jwtUtils";
 import EditPost from "../editpost/EditPost";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { deletePostApi, modifyLikeCountApi, storeCommentApi } from "../../../services/posts/apis";
 
-const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, likeCounts=0, comments=[], userName, isLikedProp, updateNewPost, removePostFromUi, userId, isAdmin}) => {
-  const [likeCount, setLikeCount] = useState(likeCounts)
+const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, likeCounts, comments, userName, isLikedProp, updateNewPost, removePostFromUi, userId, isAdmin }) => {
+  const [likeCount, setLikeCount] = useState<number>(likeCounts)
   const [isLiked, setIsLiked] = useState<boolean>(isLikedProp)
   const [isShowComments, setisShowComments] = useState<boolean>(false)
   const [message, setMessage] = useState<string | null>(null)
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState<string>("");
   const [showMenu, setShowMenu] = useState<boolean>(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
-  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState<boolean>(false);
   const [authenticate, setAuthenticate] = useState<boolean>(false);
+  const [showShareMenu, setShowShareMenu] = useState<boolean>(false);
 
+  const navigate = useNavigate();
 
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef]);
-
-  const [showCommentsOnScreen, setshowCommentsOnScreen] = useState([{
+  const [commentsWillComeHere, setCommentsWillComeHere] = useState<Comment[]>([{
     comment: "",
     user: {
       username: ""
     }
   }])
 
-  const handleLikeClick = async (title: string) => {
+  const handleLikeClick = async () => {
     try {
-    const postDetails = {
-      title: title,
-      isLiked: isLiked
-    }
-    const token = localStorage.getItem('token');
-
-    await axios.put('/modifyLikeCount', postDetails, {headers: {"auth": token}})
-    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
-
-    
-    setIsLiked(!isLiked)
+      await modifyLikeCountApi(title, isLiked);
+  
+      setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+      setIsLiked(!isLiked);
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
   const handleCommentsClick = () => {
-    setisShowComments(!isShowComments)
-    setshowCommentsOnScreen(comments)
+    setisShowComments(!isShowComments) // toogle    
+    setCommentsWillComeHere(comments) // show comments also
   }
-  
+
   const handleCommentsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const token = localStorage.getItem("token")
-
-    const commentBody = {
-      title: title,
-      comment: comment
+  
+    try {
+      await storeCommentApi(title, comment);
+  
+      const token = Cookies.get("token");
+      
+      if (token) {
+        const decodedToken = parseJwt(token);
+  
+        // Update the state with the new comment
+        setCommentsWillComeHere((prevComments) => [
+          ...prevComments,
+          { comment: comment, user: { username: decodedToken.username } },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error submitting comment:", error);
     }
-    await axios.post('/storeComments', commentBody, {headers: {"auth": token}})
+  };
 
-    if (token) {
-      const decodedToken = parseJwt(token)
-
-      // Update the state with the new comment
-      setshowCommentsOnScreen((prevComments) => [
-        ...prevComments,
-        { comment: comment, user: { username: decodedToken.username } },
-      ]);
-    }
-  }
   const handleShareClick = () => {
-    navigator.clipboard.writeText(window.location.href)
-    setMessage("Link copied to clipboard!")
-  }
+    setShowShareMenu(!showShareMenu);
+  };
 
-  const handleDotClick = () => {
-    setShowMenu(!showMenu)
-  }
-  const handleEditClick = () => {
-    setShowEditPopup(true);
+  const handleShareOptionClick = (option: string) => {
+    const url = window.location.href === "http://localhost:3000/home"
+      ? `${window.location.href}/userposts/${id}`
+      : window.location.href;
+  
+    if (option === "copy") {
+      navigator.clipboard.writeText(url);
+      setMessage("Link copied to clipboard!");
+    } else if (option === "whatsapp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(url)}`, "_blank");
+    } else if (option === "facebook") {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank");
+    }
+    setShowShareMenu(!showShareMenu);
   };
   
-  const handleDeleteClick = async () => {
+
+  const handleEnter = () => {
+    setShowMenu(true)
+  }
+  const handleLeave = () => {
+    setShowMenu(false)
+  }
+  const showEditPopupMethod = () => {
+    setShowEditPopup(true);
+  };
+
+  const showDeletePopupMethod = async () => {
     setShowDeleteConfirmation(true);
   }
 
   const confirmDelete = async () => {
-    const token = localStorage.getItem("token");
-
-    await axios.delete(`/deletePost/${id}`, {headers: {"auth": token}});
-    setShowDeleteConfirmation(false);
-    removePostFromUi(id)
+    try {
+      await deletePostApi(id);
+      
+      setShowDeleteConfirmation(false);
+  
+      if (removePostFromUi) {
+        removePostFromUi(id);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
   };
 
   const cancelDelete = () => {
@@ -117,98 +124,133 @@ const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, li
     setShowEditPopup(false);
   };
 
-  const updatePost = (updatedPost: any) => {
-    updateNewPost(updatedPost)
+  const updatePost = (updatedPost: Post) => {
+    if (updateNewPost) { 
+      updateNewPost(updatedPost)
+    }
   };
 
+  const showMoreDetails = () => {
+    navigate(`/home/userposts/${id}`)
+  }
+
+  // as per role
   const authenticateUser = () => {
     if (isAdmin) {
       setAuthenticate(true)
     } else {
-      const token = localStorage.getItem("token")
+      const token = Cookies.get("token");
       if (token) {
         const decodedToken = parseJwt(token)
-        
-        if (decodedToken.id === userId){
+
+        if (decodedToken.id === userId) {
           setAuthenticate(true)
         };
       }
     }
   }
-    useEffect(() => {
-      if (message) {
-        setTimeout(() => {
-          setMessage(null);
-        }, 2000);
-      }
-    }, [message]);
+  useEffect(() => {
+    if (message) {
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+    }
+  }, [message]);
 
-    useEffect(()=>{
-      authenticateUser();
-    })
+  useEffect(() => {
+    authenticateUser();
+  })
 
   return (
-    <div className="post-card">
-    <div className="post-card__image-container">
-      <img src={content} alt={title} className="post-card__image" />
-      {authenticate && (<MoreVertOutlined className="post-card__more-icon" onMouseEnter={handleDotClick}/>)}
-      {showMenu && (
-          <div className="post-card__menu" onMouseLeave={handleDotClick}>
-            <div onClick={handleEditClick}>
-              <EditOutlined />
-              <span>Edit</span>
+    <div className="post-card" >
+      <div className="post-card__image-container">
+        <img src={content} alt={title} className="post-card__image" />
+        {<MoreVertOutlined className="post-card__more-icon" onMouseEnter={handleEnter} onMouseLeave={handleLeave} />}
+        
+        {showShareMenu && (
+          <div className="post-card__share-menu">
+            <div onClick={() => handleShareOptionClick("whatsapp")}>
+              <WhatsApp />
+              <span>WhatsApp</span>
             </div>
-            <div onClick={handleDeleteClick}>
-              <DeleteOutline />
-              <span>Delete</span>
+            <div onClick={() => handleShareOptionClick("facebook")}>
+              <Facebook />
+              <span>Facebook</span>
+            </div>
+            <div onClick={() => handleShareOptionClick("copy")}>
+              <Link />
+              <span>Copy Link</span>
+            </div>
+          </div>
+        )}
+
+        {showMenu && (
+          <div className="post-card__menu" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+            {authenticate && (<>
+              <div onClick={showEditPopupMethod}>
+                <EditOutlined />
+                <span>Edit</span>
+              </div>
+              <div onClick={showDeletePopupMethod}>
+                <DeleteOutline />
+                <span>Delete</span>
+              </div>
+            </>)}
+
+            <div onClick={showMoreDetails}>
+              <ChromeReaderModeOutlined />
+              <span>Show More..</span>
             </div>
           </div>
         )}
         {showEditPopup && (
-        <div className="popup-overlay">
-          <EditPost
-            id = {id}
-            title={title}
-            description={description}
-            closeEditPopup={closeEditPopup}
-            updatePost={updatePost}
-          />
-        </div>
-      )}
-    </div>
+          <div className="popup-overlay">
+            <EditPost
+              id={id}
+              title={title}
+              description={description}
+              closeEditPopup={closeEditPopup}
+              updatePost={updatePost}
+            />
+          </div>
+        )}
+      </div>
       <h3 className="user">{userName}</h3>
       <div className="post-card__content">
         <h2 className="post-card__title">{title}</h2>
         <p className="post-card__description">{description}</p>
         <div className="post-card__stats">
-          <span className="post-card__likes"> {isLiked?
-           <FavoriteOutlined style={{ cursor: "pointer" , color: "red"}} onClick={()=>{handleLikeClick(title)}}/>
-           : <FavoriteBorderOutlined style={{ cursor: "pointer"}} onClick={()=>{handleLikeClick(title)}}/>
-        } {likeCount}</span>
-          <span className="post-card__comments"> <ModeCommentOutlined style={{ cursor: "pointer" }} onClick={handleCommentsClick}/></span>
-          <span className="post-card__share"> <SendOutlined style={{ cursor: "pointer" }} onClick={handleShareClick}/></span>
+          <span className="post-card__likes"> {isLiked ?
+            <FavoriteOutlined style={{ cursor: "pointer", color: "red" }} onClick={handleLikeClick} />
+            : <FavoriteBorderOutlined style={{ cursor: "pointer" }} onClick={handleLikeClick} />
+          } {likeCount}</span>
+          <span className="post-card__comments"> <ModeCommentOutlined style={{ cursor: "pointer" }} onClick={handleCommentsClick} /></span>
+          <span className="post-card__share"> <SendOutlined style={{ cursor: "pointer" }} onClick={handleShareClick} /></span>
         </div>
-        {message && <SuccessMessage message={message}/>}
+        {message && <SuccessMessage message={message} />}
         {isShowComments && (
           <div>
+            {/* add a comment form */}
             <form onSubmit={handleCommentsSubmit} className="post-card__comment-form">
               <input
                 type="text"
-                onChange={(e)=>setComment(e.target.value)}
+                onChange={(e) => setComment(e.target.value)}
                 placeholder="Add a comment..."
                 className="post-card__comment-input"
               />
               <button type="submit" className="post-card__comment-button">Submit</button>
             </form>
+
+            {/* showing comments */}
             <div className="post-card__comments-list">
-      <h3>Comments :</h3>
-      {showCommentsOnScreen.map((cmt, index) => (
-        <div key={index} className="post-card__comment-item">
-          <span className="comment-author">{cmt.user.username}:</span>
-          <span className="comment-text">{cmt.comment}</span>
-        </div>
-      ))}
-    </div>
+              <h3>Comments :</h3>
+              {commentsWillComeHere.map((cmt, index) => (
+                <div key={index} className="post-card__comment-item">
+                  <span className="comment-author">{cmt.user.username}:</span>
+                  <span className="comment-text">{cmt.comment}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

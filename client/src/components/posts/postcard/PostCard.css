@@ -1,25 +1,349 @@
-.post-container{
+.post-container {
   background-color: white;
-  margin-top: 40px;
+  margin-top: 25px;
   border-radius: 8px;
-  margin-left: 50px;
-  margin-right: 50px;
+  margin-left: 25px;
+  margin-right: 25px;
   padding-top: 10px;
 }
 
-.post-container h1{
+.post-container h1 {
   margin-left: 50px;
 }
 
 .post-card {
-    border: 1px solid #ddd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  margin: 20px;
+  background-color: white;
+  height: 100%;
+}
+
+.post-card__image {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.post-card__content {
+  padding: 15px;
+  padding-top: 0px;
+}
+
+.user {
+  padding-left: 15px;
+
+}
+
+.post-card__title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.post-card__description {
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+
+.post-card__stats {
+  font-size: 0.9em;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-card__stats span {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.post-card__comment-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.post-card__comment-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.post-card__comment-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.post-card__comment-button:hover {
+  background-color: #0056b3;
+}
+
+.post-card__comments-list {
+  margin-top: 10px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.post-card__comments-list h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.post-card__comment-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.post-card__comment-item span {
+  display: block;
+  color: #555;
+}
+
+.post-card__comment-item .comment-author {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.post-card__comment-item .comment-text {
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+
+.post-card__image-container {
+  position: relative;
+}
+
+.post-card__more-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  color: black;
+  padding: 5px;
+}
+
+.post-card__menu {
+  position: absolute;
+  top: 30px;
+  right: 8px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.post-card__menu div {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.post-card__menu div:hover {
+  background-color: #f5f5f5;
+}
+
+.post-card__menu span {
+  margin-left: 8px;
+}
+
+.button-centre {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.delete-confirmation p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.confirm-button {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.cancel-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.confirm-button:hover,
+.cancel-button:hover {
+  background-color: #0056b3;
+}
+
+.post-card__share-menu {
+  position: absolute;
+  top: 50px; /* Adjust this to position it correctly */
+  right: 10px; /* Adjust this to position it correctly */
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Adjust the number based on your icons */
+  gap: 10px;
+  width: 200px; /* Adjust this to fit your design */
+}
+
+.post-card__share-menu div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.post-card__share-menu div:hover {
+  background-color: #f0f0f0;
+}
+
+.post-card__share-menu span {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #333;
+}
+
+/* Adjust icon sizes to match the design */
+.post-card__share-menu svg {
+  font-size: 24px; /* You can adjust this size */
+  color: #555;
+}
+
+.post-card__share-menu svg:hover {
+  color: #000; /* Change color on hover */
+}
+
+
+.delete-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  /* Ensure it's on top */
+  max-width: 400px;
+  /* Adjust to your needs */
+  text-align: center;
+}
+
+.delete-confirmation p {
+  margin-bottom: 20px;
+  font-size: 1em;
+  color: #333;
+}
+
+.delete-confirmation .confirm-button,
+.delete-confirmation .cancel-button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin: 0 10px;
+}
+
+.delete-confirmation .confirm-button {
+  background-color: #ff0000;
+  color: white;
+}
+
+.delete-confirmation .cancel-button {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.delete-confirmation .confirm-button:hover {
+  background-color: #cc0000;
+}
+
+.delete-confirmation .cancel-button:hover {
+  background-color: #ddd;
+}
+
+/* Overlay for Delete Confirmation */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  /* Ensure it's just below the popup */
+}
+
+
+/* .post-container {
+    background-color: #1e1e1e;
+    margin-top: 40px;
+    border-radius: 8px;
+    margin-left: 50px;
+    margin-right: 50px;
+    padding-top: 10px;
+  }
+  
+  .post-container h1 {
+    margin-left: 50px;
+    color: #ffffff;
+  }
+  
+  .post-card {
+    border: 1px solid #444;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 300px;
     margin: 20px;
-    background-color: white;
-    height:100%;
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+    height: 100%;
   }
   
   .post-card__image {
@@ -35,21 +359,24 @@
   
   .user {
     padding-left: 15px;
-    
+    color: #ffffff;
   }
+  
   .post-card__title {
     font-size: 1.5em;
     margin-bottom: 10px;
+    color: #ffffff;
   }
   
   .post-card__description {
     font-size: 1em;
     margin-bottom: 10px;
+    color: #d0d0d0;
   }
   
   .post-card__stats {
     font-size: 0.9em;
-    color: #555;
+    color: #aaaaaa;
     display: flex;
     justify-content: space-between;
   }
@@ -58,7 +385,7 @@
     display: inline-block;
     margin-right: 15px;
   }
-
+  
   .post-card__comment-form {
     display: flex;
     flex-direction: column;
@@ -67,9 +394,11 @@
   
   .post-card__comment-input {
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #555;
     border-radius: 4px;
     margin-bottom: 10px;
+    background-color: #3e3e3e;
+    color: #e0e0e0;
   }
   
   .post-card__comment-button {
@@ -88,13 +417,13 @@
   .post-card__comments-list {
     margin-top: 10px;
     padding: 10px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #555;
   }
   
   .post-card__comments-list h3 {
     font-size: 1.2em;
     margin-bottom: 10px;
-    color: #333;
+    color: #ffffff;
   }
   
   .post-card__comment-item {
@@ -102,24 +431,25 @@
     flex-direction: row;
     margin-bottom: 10px;
     padding: 5px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #444;
   }
   
   .post-card__comment-item span {
     display: block;
-    color: #555;
+    color: #bbbbbb;
   }
   
   .post-card__comment-item .comment-author {
     font-weight: bold;
     margin-bottom: 4px;
+    color: #ffffff;
   }
   
   .post-card__comment-item .comment-text {
     font-size: 0.9em;
     margin-left: 10px;
   }
-
+  
   .post-card__image-container {
     position: relative;
   }
@@ -129,7 +459,7 @@
     top: 8px;
     right: 8px;
     cursor: pointer;
-    color: black;
+    color: white;
     padding: 5px;
   }
   
@@ -137,10 +467,10 @@
     position: absolute;
     top: 30px;
     right: 8px;
-    background-color: white;
-    border: 1px solid #ddd;
+    background-color: #2e2e2e;
+    border: 1px solid #555;
     border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
   }
   
@@ -149,60 +479,71 @@
     align-items: center;
     padding: 10px;
     cursor: pointer;
+    color: #e0e0e0;
   }
   
   .post-card__menu div:hover {
-    background-color: #f5f5f5;
+    background-color: #444;
   }
   
   .post-card__menu span {
     margin-left: 8px;
   }
   
-  .button-centre{
+  .button-centre {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+  
   .delete-confirmation {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid #ddd;
+    background-color: #2e2e2e;
+    border: 1px solid #555;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    color: #e0e0e0;
   }
   
-  .delete-confirmation p {
-    margin-bottom: 20px;
-    font-size: 1.1em;
-  }
-  
-  .confirm-button{
-    background-color: green;
+  .confirm-button {
+    background-color: #d32f2f;
     color: white;
     border: none;
     padding: 10px 20px;
+    margin-right: 10px;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 10px;
+  }
+  
+  .confirm-button:hover {
+    background-color: #b71c1c;
   }
   
   .cancel-button {
-    background-color: red;
+    background-color: #555;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 10px;
   }
   
-  .confirm-button:hover, .cancel-button:hover {
-    background-color: #0056b3;
+  .cancel-button:hover {
+    background-color: #444;
   }
   
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 3;
+  }
+   */

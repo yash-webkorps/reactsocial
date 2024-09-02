@@ -1,11 +1,6 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
-// import axios from 'axios';
-import './ProfilePicturePopup.css'; // Create CSS for the popup
-
-interface ProfilePicturePopupProps {
-  onClose: () => void;
-  onSubmit: (file: File) => void;
-}
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import './ProfilePicturePopup.css';
+import { ProfilePicturePopupProps } from '../../interfaces/interfaces';
 
 const ProfilePicturePopup: React.FC<ProfilePicturePopupProps> = ({ onClose, onSubmit }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -27,10 +22,11 @@ const ProfilePicturePopup: React.FC<ProfilePicturePopupProps> = ({ onClose, onSu
     }
   };
 
-  React.useEffect(() => {
+  // Clean up the URL when the component unmounts
+  useEffect(() => {
     return () => {
       if (previewURL) {
-        URL.revokeObjectURL(previewURL); // Clean up the URL when the component unmounts
+        URL.revokeObjectURL(previewURL);
       }
     };
   }, [previewURL]);  

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { INVALID_TOKEN, NO_TOKEN_PROVIDED, USER_NOT_FOUND } from '../constants/errormessages.js';
+import Post from '../models/Post.js';
 
 const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
@@ -9,6 +10,23 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        
+        if (req.method === 'GET' && /^\/postdetails\/[0-9a-fA-F-]+$/.test(req.path)) {
+            const { postId } = req.params;
+            const post = await Post.findByPk(postId)
+
+            const user = await User.findByPk(post?.userId);
+
+            if (!user?.isPrivate) {
+                req.user = user;
+                return next();
+            }
+            else if (!post?.isPrivate) {
+                req.user = user;
+                return next();
+            }
+        }
+        
         const token = req.header('auth');
         if (!token) {
             return res.status(UNAUTHORIZED).json({ error: NO_TOKEN_PROVIDED });

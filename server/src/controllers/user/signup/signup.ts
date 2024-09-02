@@ -30,7 +30,7 @@ const signup = async (req: Request, res: Response) => {
         if (file) {
             const result = await cloudinary.uploader.upload(file.path)
             cloudinaryPublicId = result.public_id;
-            await User.create({id: uuidv4(), username, profilePic: result.secure_url, email, password: hash});
+            await User.create({id: uuidv4(), username, profilePic: result.secure_url, email, password: hash, cloudinaryPublicId});
         }
 
         res.status(SUCCESS).json({message: "Signup success!"})

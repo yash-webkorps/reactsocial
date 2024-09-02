@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../utils/database.js";
 import { UserAttributes } from "../interfaces/interfaces.js";
 
@@ -33,6 +33,12 @@ const User = sequelize.define<UserInstance>('user', {
   password: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  cloudinaryPublicId: {
+    type: DataTypes.STRING
+  },
+  isPrivate: {
+    type: DataTypes.BOOLEAN
   },
   isAdmin: {
     type: DataTypes.BOOLEAN

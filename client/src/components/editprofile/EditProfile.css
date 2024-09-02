@@ -91,3 +91,20 @@
   .file-input{
     flex: 10;
   }
+
+  .visibility-options {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
+  .visibility-options label {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+  }
+  
+  .visibility-options input {
+    margin-right: 5px;
+  }
+  

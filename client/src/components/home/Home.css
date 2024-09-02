@@ -1,0 +1,39 @@
+body {
+  background-color: rgb(193, 190, 255);
+
+}
+
+.home {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(193, 190, 255);
+  margin-top: 20px;
+  height: 100%
+}
+
+.posts-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.post-container {
+  padding: 20px;
+}
+
+.post-container-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sort-select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 16px;
+  margin-right: 55px;
+}
