@@ -1,10 +1,11 @@
-import { Router } from "express";
-import userRoutes from "./userRoutes.js"
-import postRoutes from "./postRoutes.js"
+import { Router } from "express"
+import userRouter from "../services/user/api/index.js"
+import postRouter from "../services/posts/api/index.js";
+import '../models/relations.js'
 
 const router = Router();
 
-router.use(userRoutes)
-router.use(postRoutes)
+router.use('/user', userRouter)
+router.use('/post', postRouter)
 
-export default router;
+export default router

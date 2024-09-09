@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
-import { INVALID_TOKEN, NO_TOKEN_PROVIDED, USER_NOT_FOUND } from '../constants/errormessages.js';
+import { INVALID_TOKEN, NO_TOKEN_PROVIDED, POST_NOT_FOUND, USER_NOT_FOUND } from '../constants/errormessages.js';
 import Post from '../models/Post.js';
 
 const UNAUTHORIZED = 401;
@@ -10,18 +10,18 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        
-        if (req.method === 'GET' && /^\/postdetails\/[0-9a-fA-F-]+$/.test(req.path)) {
+        if (req.query.isPrivate === "true" || req.query.isPrivate === "false") {
             const { postId } = req.params;
-            const post = await Post.findByPk(postId)
-
-            const user = await User.findByPk(post?.userId);
-
-            if (!user?.isPrivate) {
-                req.user = user;
-                return next();
+        
+            const post = await Post.findByPk(postId);
+            
+            if (!post) {
+                return res.status(NOT_FOUND).json({ error: POST_NOT_FOUND});
             }
-            else if (!post?.isPrivate) {
+            
+            const user = await User.findByPk(post?.userId);
+    
+            if (!user?.isPrivate || !post?.isPrivate) {                
                 req.user = user;
                 return next();
             }
@@ -31,7 +31,6 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         if (!token) {
             return res.status(UNAUTHORIZED).json({ error: NO_TOKEN_PROVIDED });
         }
-        
         
         const userAsPerToken = jwt.verify(token, process.env.JWT_SECRET as string) as { id: number }; 
         const user = await User.findByPk(userAsPerToken.id);

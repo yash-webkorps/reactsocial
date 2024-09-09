@@ -1,16 +1,15 @@
 import { Request, Response } from "express"
-import User from "../../../models/User.js";
+import { User } from "../../../models/index.js";
 import { SignupRequestBody } from "../../../interfaces/interfaces.js";
 import bcrypt from "bcrypt"
 import { BAD_REQUEST, CONFLICT, SUCCESS } from "../../../constants/errorcodes.js";
 import { handleError } from "../../../utils/errorHandler.js";
 import { UNIQUE_CONSTRAINT_ERROR, VALIDATION_ERROR } from "../../../constants/errormessages.js";
-import { v4 as uuidv4 } from 'uuid';
-import cloudinary from "../../../utils/cloudinary.js";
+import cloudinary from "../../../configs/cloudinary.js";
 import { Op } from "sequelize";
 
 
-const signup = async (req: Request, res: Response) => {
+const userSignup = async (req: Request, res: Response) => {
     let cloudinaryPublicId: string | null = null;
     try {
         const {username, email, password} = req.body as SignupRequestBody;
@@ -30,7 +29,7 @@ const signup = async (req: Request, res: Response) => {
         if (file) {
             const result = await cloudinary.uploader.upload(file.path)
             cloudinaryPublicId = result.public_id;
-            await User.create({id: uuidv4(), username, profilePic: result.secure_url, email, password: hash, cloudinaryPublicId});
+            await User.create({ username, profilePic: result.secure_url, email, password: hash, cloudinaryPublicId});
         }
 
         res.status(SUCCESS).json({message: "Signup success!"})
@@ -46,4 +45,4 @@ const signup = async (req: Request, res: Response) => {
     }
 }
 
-export default signup;
+export default userSignup;

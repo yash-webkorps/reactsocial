@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../utils/database.js";
+import sequelize from "../configs/database.js";
 
 // Define the attributes of the User model
 interface PostAttributes {
@@ -10,21 +10,21 @@ interface PostAttributes {
   cloudinaryPublicId: string;
   likeCounts?: number;
   userId: string;
-  isPrivate: boolean
+  isPrivate: boolean;
 }
 
-// Define the creation attributes, omitting fields that will be auto-generated
 interface PostCreationAttributes extends Optional<PostAttributes, 'id'> {}
 
-// Extend the Model class with the PostAttributes and PostCreationAttributes
-interface PostInstance extends Model<PostAttributes, PostCreationAttributes>, PostAttributes {}
+interface PostInstance extends Model<PostAttributes, PostCreationAttributes>, PostAttributes {
+  [x: string]: any;
+}
 
-// Define the Post model using the define method
 const Post = sequelize.define<PostInstance>('post', {
   id: {
-    type: DataTypes.STRING,
+    type: DataTypes.UUIDV4,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4()
   },
   title: {
     type: DataTypes.STRING,
@@ -46,7 +46,7 @@ const Post = sequelize.define<PostInstance>('post', {
     allowNull: false
   },
   userId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUIDV4,
     references: {
       model: 'Users',
       key: 'id',

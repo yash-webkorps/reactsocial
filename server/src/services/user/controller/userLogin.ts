@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import User from "../../../models/User.js";
+import { User } from "../../../models/index.js";
 import { LoginRequestBody } from "../../../interfaces/interfaces.js";
 import bcrypt from "bcrypt"
 import { BAD_REQUEST, SUCCESS, UNAUTHORIZED } from "../../../constants/errorcodes.js";
@@ -7,7 +7,7 @@ import { handleError } from "../../../utils/errorHandler.js";
 import generateToken from "../../../utils/generateToken.js";
 import { PASSWORD_MISMATCH, USER_NOT_FOUND, VALIDATION_ERROR } from "../../../constants/errormessages.js";
 
-const login = async (req: Request, res: Response) => {
+const userLogin = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body as LoginRequestBody;
 
@@ -33,5 +33,5 @@ const login = async (req: Request, res: Response) => {
     }
 }
 
-export default login;
+export default userLogin;
   

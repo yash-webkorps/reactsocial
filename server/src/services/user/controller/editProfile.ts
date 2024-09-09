@@ -1,16 +1,18 @@
 import { Request, Response } from "express"
-import { ExtendedSignupRequestBody } from "../../../interfaces/interfaces.js";
-import { BAD_REQUEST } from "../../../constants/errorcodes.js";
-import { handleError } from "../../../utils/errorHandler.js";
-import { VALIDATION_ERROR } from "../../../constants/errormessages.js";
-import cloudinary from "../../../utils/cloudinary.js";
-import User from "../../../models/User.js";
+import { ExtendedSignupRequestBody } from "../../../interfaces/interfaces.js"
+import { BAD_REQUEST } from "../../../constants/errorcodes.js"
+import { handleError } from "../../../utils/errorHandler.js"
+import { VALIDATION_ERROR } from "../../../constants/errormessages.js"
+import { User } from "../../../models/index.js"
+import cloudinary from "../../../configs/cloudinary.js"
 import bcrypt from "bcrypt"
 
 
-const editProfileController = async (req: Request, res: Response) => {
+const editProfile = async (req: Request, res: Response) => {
     let cloudinaryPublicId: string | null = null;
     try {
+        console.log("editProfile");
+      
         const {username, email, password, visibility} = req.body as ExtendedSignupRequestBody;
         
         const file = req.file;
@@ -42,8 +44,10 @@ const editProfileController = async (req: Request, res: Response) => {
               console.error("Cloudinary deletion error:", deleteError);
             }
           }
+        console.log(error);
+        
         handleError(error, res)
     }
 }
 
-export default editProfileController;
+export default editProfile;

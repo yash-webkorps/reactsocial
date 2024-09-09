@@ -1,11 +1,10 @@
 import { Request, Response } from "express"
-import { PostRequestBody } from "../../interfaces/interfaces.js";
-import { BAD_REQUEST, SUCCESS } from "../../constants/errorcodes.js";
-import { handleError } from "../../utils/errorHandler.js";
-import { VALIDATION_ERROR } from "../../constants/errormessages.js";
-import Post from "../../models/Post.js";
-import { v4 as uuidv4 } from 'uuid';
-import cloudinary from "../../utils/cloudinary.js";
+import { PostRequestBody } from "../../../interfaces/interfaces.js";
+import { BAD_REQUEST, SUCCESS } from "../../../constants/errorcodes.js";
+import { handleError } from "../../../utils/errorHandler.js";
+import { VALIDATION_ERROR } from "../../../constants/errormessages.js";
+import { Post } from "../../../models/index.js";
+import cloudinary from "../../../configs/cloudinary.js";
 
 
 const addPost = async (req: Request, res: Response) => {
@@ -25,7 +24,7 @@ const addPost = async (req: Request, res: Response) => {
             const result = await cloudinary.uploader.upload(file.path)
             cloudinaryPublicId = result.public_id;
             const isPrivate = visibility === "private" ? true : false;
-            const post = await Post.create({id: uuidv4(), title, description, content: result.secure_url,cloudinaryPublicId, userId: user.id, likeCounts: 0, isPrivate});
+            const post = await Post.create({title, description, content: result.secure_url,cloudinaryPublicId, userId: user.id, likeCounts: 0, isPrivate});
             res.status(SUCCESS).json({post: post, userName: user.username})
         }
         

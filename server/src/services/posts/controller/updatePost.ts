@@ -1,11 +1,10 @@
 import { Request, Response } from "express"
-import { PostRequestBody } from "../../interfaces/interfaces.js";
-import { BAD_REQUEST } from "../../constants/errorcodes.js";
-import { handleError } from "../../utils/errorHandler.js";
-import { VALIDATION_ERROR } from "../../constants/errormessages.js";
-import Post from "../../models/Post.js";
-import cloudinary from "../../utils/cloudinary.js";
-import User from "../../models/User.js";
+import { PostRequestBody } from "../../../interfaces/interfaces.js";
+import { BAD_REQUEST } from "../../../constants/errorcodes.js";
+import { handleError } from "../../../utils/errorHandler.js";
+import { VALIDATION_ERROR } from "../../../constants/errormessages.js";
+import { Post, User} from "../../../models/index.js";
+import cloudinary from "../../../configs/cloudinary.js";
 
 
 const updatePost = async (req: Request, res: Response) => {

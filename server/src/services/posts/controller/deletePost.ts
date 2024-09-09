@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import { handleError } from "../../utils/errorHandler.js";
-import Post from "../../models/Post.js";
-import cloudinary from "../../utils/cloudinary.js";
+import { handleError } from "../../../utils/errorHandler.js";
+import { Post } from "../../../models/index.js";
+import cloudinary from "../../../configs/cloudinary.js";
 
 const deletePost = async (req: Request, res: Response) => {
     try{
