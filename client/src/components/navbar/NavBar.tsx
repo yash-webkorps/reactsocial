@@ -25,7 +25,7 @@ const NavBar: React.FC<NavBarProps> = ({profilePic}) => {
         />
         <span className="navbar__title">React Social.</span>
       </div>
-      <input type="text" className="navbar__search" placeholder="Search" />
+      {/* <input type="text" className="navbar__search" placeholder="Search" /> */}
       <div className="navbar__icons">
         <HomeOutlined style={{fontSize: "32px", cursor: "pointer"}} onClick={showHome}/>
         <AddOutlined style={{fontSize: "28px", cursor: "pointer"}} onClick={showCreatePost}/>

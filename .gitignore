@@ -7,3 +7,4 @@ server/models
 server/node_modules/
 server/seeders
 server/.env
+server/.sequelizerc.js

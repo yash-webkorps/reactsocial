@@ -5,7 +5,8 @@ import "./Home.css";
 import ErrorMessage from "../errormessage/ErrorMessage";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar/NavBar";
-import { fetchPostsApi, sortPostsApi } from "../../services/posts/apis";
+import { fetchPostsApi } from "../../services/posts/apis";
+import Loader from "../loader/Loader";
 
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -18,6 +19,8 @@ const Home: React.FC = () => {
   
   const [sortOption, setSortOption] = useState<string>("newest");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
   const [page, setPage] = useState<number>(1);
   const [hasMorePosts, setHasMorePosts] = useState<boolean>(true)
@@ -53,30 +56,41 @@ const Home: React.FC = () => {
 
   const sortPosts = async () => {
     try {
-      const sortedPosts = await sortPostsApi(posts, sortOption);
-      setPosts(sortedPosts);
+      setIsLoading(true)
+
+      const limit = posts.length;
+      const res = await fetchPostsApi(1, limit, sortOption);
+      
+      setPosts(res.posts);
     } catch (error) {
       console.error('Error sorting posts:', error);
       setError("Error Sorting Posts")
+    }  finally {
+      setIsLoading(false)
     }
   };
 
   async function authenticateUserAndFetchPosts() {
     try {
-      if (hasMorePosts) {
-        const { posts, user } = await fetchPostsApi(page, 3);
+      if (hasMorePosts) {  
+        setIsLoading(true)
+
+        const { posts, user } = await fetchPostsApi(page, 3, sortOption);
 
         if (posts.length < 3) {
           setHasMorePosts(false);
         }
 
-        posts.sort((a: Post, b: Post) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
+        console.log(posts);
+        console.log(user);
+        
         setPosts(prevPosts => [...prevPosts, ...posts]);
         setUser(user);
       }
     } catch (error) {
-      navigate('/authenticationfailed');
+      // navigate('/authenticationfailed');
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -109,10 +123,13 @@ const Home: React.FC = () => {
               isLikedProp={post.isLiked}
               userId={post.userId}
               isAdmin={user.isAdmin}
+              likedBy={post.likedBy}
+              isPrivate={post.isPrivate}
             />
           ))}
         </div>
       </div>
+      {isLoading && <Loader />}
     </>
   );
 };

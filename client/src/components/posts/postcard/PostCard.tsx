@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { deletePostApi, modifyLikeCountApi, storeCommentApi } from "../../../services/posts/apis";
 
-const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, likeCounts, comments, userName, isLikedProp, updateNewPost, removePostFromUi, userId, isAdmin }) => {
+const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, likeCounts, comments, userName, isLikedProp, updateNewPost, removePostFromUi, userId, isAdmin, likedBy, isPrivate }) => {
   const [likeCount, setLikeCount] = useState<number>(likeCounts)
   const [isLiked, setIsLiked] = useState<boolean>(isLikedProp)
   const [isShowComments, setisShowComments] = useState<boolean>(false)
@@ -73,8 +73,8 @@ const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, li
 
   const handleShareOptionClick = (option: string) => {
     const url = window.location.href === "http://localhost:3000/home"
-      ? `${window.location.href}/userposts/${id}`
-      : window.location.href;
+      ? `${window.location.href}/userposts/${id}?isPrivate=${isPrivate}`
+      : `${window.location.href}?isPrivate=${isPrivate}`;
   
     if (option === "copy") {
       navigator.clipboard.writeText(url);
@@ -131,6 +131,8 @@ const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, li
   };
 
   const showMoreDetails = () => {
+    console.log();
+    
     navigate(`/home/userposts/${id}`)
   }
 
@@ -160,6 +162,35 @@ const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, li
   useEffect(() => {
     authenticateUser();
   })
+
+  const getLikesText = () => {
+    if (!likedBy || likedBy.length === 0) return "";
+
+    const [first, ...rest] = likedBy;
+    if (rest.length === 0) {
+      return (
+        <div className="likes-text">
+          <img src={first.profilePic} alt={first.username} className="likes-profile-pic" />
+          <span>Liked by {first.username}</span>
+        </div>
+      );
+    } else if (rest.length === 1) {
+      return (
+        <div className="likes-text">
+          <img src={first.profilePic} alt={first.username} className="likes-profile-pic" />
+          <span>Liked by {first.username} and 1 other.</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="likes-text">
+          <img src={first.profilePic} alt={first.username} className="likes-profile-pic" />
+          <span>Liked by {first.username} and {rest.length} others.</span>
+        </div>
+      );
+    }
+  };
+
 
   return (
     <div className="post-card" >
@@ -227,6 +258,9 @@ const PostCard: React.FC<PostCardProps> = ({ id, title, description, content, li
           <span className="post-card__comments"> <ModeCommentOutlined style={{ cursor: "pointer" }} onClick={handleCommentsClick} /></span>
           <span className="post-card__share"> <SendOutlined style={{ cursor: "pointer" }} onClick={handleShareClick} /></span>
         </div>
+        {/* likedBy code goes here */}
+        {/* <p className="post-card__likes-text">{getLikesText()}</p> */}
+        {getLikesText()}
         {message && <SuccessMessage message={message} />}
         {isShowComments && (
           <div>

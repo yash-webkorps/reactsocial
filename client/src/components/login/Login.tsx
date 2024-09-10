@@ -10,6 +10,7 @@ import ErrorMessage from "../errormessage/ErrorMessage";
 
 import Cookies from "js-cookie";
 import { loginUserApi } from "../../services/users/apis";
+import Loader from "../loader/Loader";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -18,6 +19,8 @@ const Login: React.FC = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +34,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
-  
+      setIsLoading(true)
       const res = await loginUserApi(formData);
   
       Cookies.set("token", res.data.token);
@@ -63,6 +66,8 @@ const Login: React.FC = () => {
         console.error(error);
         setError("An unexpected error occurred.");
       }
+    }  finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,6 +111,7 @@ const Login: React.FC = () => {
           </form>
         </div>
       </div>
+      {isLoading && <Loader />}
     </div>
   );
 };

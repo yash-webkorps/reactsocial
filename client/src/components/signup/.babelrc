@@ -1,0 +1,25 @@
+// {
+//     "presets": ["@babel/preset-env", "@babel/preset-react"]
+//   }
+
+{
+  "presets" : [
+      [
+          "@babel/preset-env",
+          {
+              "targets" : {
+                  "node" : "14",
+                  "browsers" : [
+                      "> 1%",
+                      "last 2 node versions",
+                      "ie > 11"
+                  ]
+              },
+              "useBuiltIns" : "usage",
+              "corejs" : 3
+          }
+      ]
+  ],
+  "sourceType": "module",
+  "sourceMap": true
+}

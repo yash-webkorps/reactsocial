@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import PostCard from "../posts/postcard/PostCard";
 import { Post, User } from "../../interfaces/interfaces";
 import "./PostDetails.css";
 import ErrorMessage from "../errormessage/ErrorMessage";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowBackIosOutlined } from "@material-ui/icons";
-import Cookies from "js-cookie";
+import { postDetailsApi } from "../../services/posts/apis";
 
 const PostDetails: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -16,10 +15,11 @@ const PostDetails: React.FC = () => {
     profilePic: "",
     isAdmin: false,
   });
-
+  
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  
+  const location = useLocation();
   const {id} = useParams()
   
   useEffect(() => {
@@ -38,12 +38,13 @@ const PostDetails: React.FC = () => {
   };
   async function authenticateUserAndFetchPosts() {
     try {
-      const token = Cookies.get("token");
-
-      const res = await axios.get(`/postdetails/${id}`, { headers: { auth: token } });
+      const params = new URLSearchParams(location.search);
+      const isPrivate = params.get('isPrivate') === 'true';
+  
+      // Fetch the post details with the id and isPrivate parameter
+      const res = await postDetailsApi(id as string, isPrivate);
 
       const posts = [res.data.post];
-      console.log(posts);
       
       const user = res.data.user;
       
@@ -83,6 +84,7 @@ const PostDetails: React.FC = () => {
               removePostFromUi={removePostFromUi}
               userId={post.userId}
               isAdmin={user.isAdmin}
+              isPrivate={post.isPrivate}
             />
           ))}
         </div>

@@ -6,7 +6,7 @@ import { ClearOutlined } from "@material-ui/icons";
 import NavBar from "../navbar/NavBar";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader/Loader";
-import { updateProfileApi } from "../../services/posts/apis";
+import { updateProfileApi } from "../../services/users/apis";
 
 const EditProfile: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -106,6 +106,8 @@ const EditProfile: React.FC = () => {
         fileInputRef.current.value = "";
       }
     } catch (error: unknown) {
+      console.log(error);
+      
       if (error instanceof AxiosError) {
         if (error.response) {
           const { status } = error.response;

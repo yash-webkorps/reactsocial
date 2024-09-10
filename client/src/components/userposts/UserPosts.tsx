@@ -6,8 +6,8 @@ import ErrorMessage from "../errormessage/ErrorMessage";
 import { useNavigate } from "react-router-dom";
 import UserInfo from "../userinfo/UserInfo";
 import NavBar from "../navbar/NavBar";
-import Cookies from "js-cookie";
 import { fetchUserPostsApi } from "../../services/posts/apis";
+import Loader from "../loader/Loader";
 
 const UserPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -19,31 +19,53 @@ const UserPosts: React.FC = () => {
   });
   
   const [sortOption, setSortOption] = useState<string>("newest");
+  const [page, setPage] = useState<number>(1);
+  
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate()
   
   useEffect(() => {
     authenticateUserAndFetchPosts();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     sortPosts();
   }, [sortOption]);
 
-  const sortPosts = () => {
-    const sortedPosts = [...posts];
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight || window.innerHeight;
+  
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
+        setPage((prevPage)=>prevPage+1)
+      }
+    };
+  
+    window.addEventListener("scroll", handleScroll);
+  
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+}, []);
 
-    if (sortOption === "newest") {
-      sortedPosts.sort((a: Post, b: Post) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } 
-    else if (sortOption === "oldest") {
-      sortedPosts.sort((a: Post, b: Post) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    } 
-    else if (sortOption === "mostLiked") {
-      sortedPosts.sort((a: Post, b: Post) => b.likeCounts - a.likeCounts);
+  const sortPosts = async () => {
+    try {
+      setIsLoading(true)
+
+      const limit = posts.length;
+      const res = await fetchUserPostsApi(1, limit, sortOption);
+      
+      setPosts(res.posts);
+    } catch (error) {
+      console.error('Error sorting posts:', error);
+      setError("Error Sorting Posts")
+    }  finally {
+      setIsLoading(false)
     }
-    setPosts(sortedPosts);
   };
   const updateNewPost = (updatedPost: Post) => {
     setPosts((prevPosts) =>
@@ -57,14 +79,17 @@ const UserPosts: React.FC = () => {
   };
   async function authenticateUserAndFetchPosts() {
     try {
-      const { posts, user } = await fetchUserPostsApi();
+      setIsLoading(true)
+
+      const { posts, user } = await fetchUserPostsApi(page, 3, sortOption);
   
-      posts.sort((a: Post, b: Post) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  
-      setPosts(posts);
+      setPosts(prevPosts => [...prevPosts, ...posts]);
+
       setUser(user);
     } catch (error) {
       navigate('/authenticationfailed');
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -103,10 +128,12 @@ const UserPosts: React.FC = () => {
               removePostFromUi={removePostFromUi}
               userId={post.userId}
               isAdmin={user.isAdmin}
+              likedBy={post.likedBy}
             />
           ))}
         </div>
       </div>
+      {isLoading && <Loader />}
     </>
   );
 };

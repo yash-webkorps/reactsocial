@@ -319,6 +319,19 @@
   /* Ensure it's just below the popup */
 }
 
+.likes-text {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.likes-profile-pic {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
 
 /* .post-container {
     background-color: #1e1e1e;

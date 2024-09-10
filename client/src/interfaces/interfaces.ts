@@ -39,6 +39,8 @@ export interface PostCardProps {
   removePostFromUi?: (id: string) => void;
   userId: string;
   isAdmin: boolean;
+  likedBy?: User[];
+  isPrivate?: boolean
 }
 
 export interface CreatePostProps {
@@ -58,6 +60,8 @@ export interface Post {
   user: User;
   isLiked: boolean;
   comments: Comment[];
+  likedBy: User[];
+  isPrivate: boolean
 }
 
 export interface UserProfileProps {

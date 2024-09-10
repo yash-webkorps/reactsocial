@@ -1,94 +1,103 @@
 .register {
-    height: 100vh;
-    background-color: rgb(193, 190, 255);
+  height: 100vh;
+  background-color: rgb(193, 190, 255);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .card {
+    width: 50%;
+    height: 75%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    .card {
-      width: 50%;
-      height: 75%;
+    flex-direction: row-reverse;
+    background-color: white;
+    border-radius: 10px;
+    /* min-height: 600px; */
+
+    .left {
+      flex: 1;
+      background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
+        url("https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600") center;
+      background-size: cover;
+      padding: 20px;
       display: flex;
-      flex-direction: row-reverse;
-      background-color: white;
-      border-radius: 10px;
-      /* min-height: 600px; */
-  
-      .left {
-        flex: 1;
-        background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-          url("https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600")
-            center;
-        background-size: cover;
-        padding: 20px;
+      flex-direction: column;
+      /* gap: 30px; */
+      color: white;
+
+      h1 {
+        font-size: 70px;
+        /* line-height: 100px; */
+        margin: 0;
+        padding: 0;
+      }
+
+      span {
+        font-size: 14px;
+      }
+
+      button {
+        width: 50%;
+        padding: 10px;
+        border: none;
+        background-color: white;
+        color: rebeccapurple;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+    }
+
+    .right {
+      flex: 1;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      /* gap: 50px; */
+      justify-content: center;
+      overflow-y: auto;
+
+      h1 {
+        color: #555;
+      }
+
+      form {
         display: flex;
         flex-direction: column;
-        /* gap: 30px; */
-        color: white;
-  
-        h1 {
-          font-size: 70px;
-          /* line-height: 100px; */
-          margin: 0;
-          padding: 0;
+        gap: 30px;
+
+        input {
+          border: none;
+          border-bottom: 1px solid lightgray;
+          padding: 20px 10px;
         }
-  
-        span {
-          font-size: 14px;
-        }
-        
+
         button {
           width: 50%;
           padding: 10px;
           border: none;
-          background-color: white;
-          color: rebeccapurple;
+          background-color: #938eef;
+          color: white;
           font-weight: bold;
           cursor: pointer;
-          margin-top: 20px;
         }
-      }
-  
-      .right {
-        flex: 1;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        /* gap: 50px; */
-        justify-content: center;
-        overflow-y: auto;
-  
-        h1 {
-        color: #555;
-        }
-        
-        form {
-          display: flex;
-          flex-direction: column;
-          gap: 30px;
-          
-          input {
-          border: none;
-          border-bottom: 1px solid lightgray;
-          padding: 20px 10px;
-          }
-          
-          button {
-            width: 50%;
-            padding: 10px;
-            border: none;
-            background-color: #938eef;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-          }
-          button:disabled {
-            background-color: #d6d6d6; /* Background color for disabled state */
-            color: #a0a0a0; /* Text color for disabled state */
-            cursor: not-allowed;
-            opacity: 0.6; /* Optional: make the button look faded */
-          }
+
+        button:disabled {
+          background-color: #d6d6d6;
+          /* Background color for disabled state */
+          color: #a0a0a0;
+          /* Text color for disabled state */
+          cursor: not-allowed;
+          opacity: 0.6;
+          /* Optional: make the button look faded */
         }
       }
     }
   }
+  @media (max-width: 768px) {
+    .card{
+      flex-direction: column-reverse;
+      height: 100%;
+    }
+  }
+}

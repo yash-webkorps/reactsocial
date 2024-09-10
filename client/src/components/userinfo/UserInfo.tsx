@@ -23,7 +23,7 @@ const UserInfo: React.FC<UserInfoProps> = ({username, profilePic}) => {
             <button className="edit-profile-button-i" onClick={goEdit}>Edit Profile</button>
             <button className="edit-profile-button-i" onClick={goBack}>Back</button>
           </div>
-          <div className="stats-section-i">
+          {/* <div className="stats-section-i">
             <div className="stat-i">
               <span className="stat-count-i">10</span>
               <span className="stat-label-i">posts</span>
@@ -36,7 +36,7 @@ const UserInfo: React.FC<UserInfoProps> = ({username, profilePic}) => {
               <span className="stat-count-i">120</span>
               <span className="stat-label-i">following</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
